@@ -25,21 +25,56 @@ class _GameBoardState extends State<GameBoard> {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: grid.size,
-      ),
-      itemCount: grid.size * grid.size,
-      itemBuilder: (context, index) {
-        final row = index ~/ grid.size;
-        final col = index % grid.size;
-        return GridTileWidget(
-          row: row,
-          col: col,
-          value: grid.cells[row][col].value,
-          isBlack: grid.cells[row][col].isBlack
-        );
-      },
+    return Column(
+      children: [
+        Expanded(
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: grid.size,
+            ),
+            itemCount: grid.size * grid.size,
+            itemBuilder: (context, index) {
+              final row = index ~/ grid.size;
+              final col = index % grid.size;
+              return GridTileWidget(
+                row: row,
+                col: col,
+                value: grid.cells[row][col].value,
+                isBlack: grid.cells[row][col].isBlack
+              );
+            },
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: ElevatedButton(
+                onPressed: () {
+                  // Ajoutez ici le code pour sauvegarder la partie en cours.
+                },
+                style: ElevatedButton.styleFrom(
+                  fixedSize: const Size(140, 48),
+                ),
+                child: Text("Quitter"),
+              )
+            ),
+            Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: ElevatedButton(
+                onPressed: () {
+                  // Ajoutez ici le code pour sauvegarder la partie en cours.
+                },
+                style: ElevatedButton.styleFrom(
+                  fixedSize: const Size(140, 48),
+                ),
+                child: Text("Valider"),
+              )
+            ),
+          ],
+        )
+      ]
     );
   }
 }

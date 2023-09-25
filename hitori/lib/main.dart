@@ -32,7 +32,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final String title = "Hitori";
-  int _counter = 0;
   static const Map<String, int> listOfGrid = {
     "5x5": 5,
     "6x6": 6,
