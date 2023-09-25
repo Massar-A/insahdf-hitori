@@ -18,20 +18,28 @@ class _GameScreenState extends State<GameScreen> {
     // Utilisez widget.gridSize pour créer la grille de jeu avec la bonne taille.
     // Implementez la logique de jeu ici.
     return Scaffold(
-      appBar: AppBar(title: Text('Jeu')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.75, // On donne une hauteur pour contenir le GridView
-              child: GameBoard(gridSize: widget.gridSize,),
-            ),
-            // Ajoutez d'autres widgets pour les contrôles du jeu ici.
-          ],
+        appBar: AppBar(
+          title: const Text('Jeu'),
+          automaticallyImplyLeading: false,
         ),
-      ),
-    );
+        body: WillPopScope(
+          onWillPop: () async => false,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.75,
+                  // On donne une hauteur pour contenir le GridView
+                  child: GameBoard(
+                    gridSize: widget.gridSize,
+                  ),
+                ),
+                // Ajoutez d'autres widgets pour les contrôles du jeu ici.
+              ],
+            ),
+          ),
+        ));
   }
 }

@@ -25,21 +25,27 @@ class _GameBoardState extends State<GameBoard> {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: grid.size,
-      ),
-      itemCount: grid.size * grid.size,
-      itemBuilder: (context, index) {
-        final row = index ~/ grid.size;
-        final col = index % grid.size;
-        return GridTileWidget(
-          row: row,
-          col: col,
-          value: grid.cells[row][col].value,
-          isBlack: grid.cells[row][col].isBlack
-        );
-      },
-    );
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: grid.size,
+            ),
+            itemCount: grid.size * grid.size,
+            itemBuilder: (context, index) {
+              final row = index ~/ grid.size;
+              final col = index % grid.size;
+              return GridTileWidget(
+                  row: row,
+                  col: col,
+                  value: grid.cells[row][col].value,
+                  isBlack: grid.cells[row][col].isBlack);
+            },
+          ),
+        ]);
   }
 }
