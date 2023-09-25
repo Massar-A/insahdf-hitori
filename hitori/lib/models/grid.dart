@@ -1,5 +1,5 @@
 import 'dart:math';
-
+import 'package:flutter/material.dart';
 import '../widgets/grid_tile.dart'; 
 
 class Grid {
@@ -17,10 +17,12 @@ class Grid {
       (i) => List.generate(
         size,
         (j) => GridTileWidget(
+          key: UniqueKey(),
           row: i,
           col: j,
           isBlack: false,
-          value: 0, // Valeur initiale (0 pour une case blanche).
+          value: 0,
+          onTap: toggleCell, // Valeur initiale (0 pour une case blanche).
         ),
       ),
     );
@@ -49,6 +51,7 @@ class Grid {
         col: j,
         isBlack: false,
         value: grid[i][j].value,
+        onTap: toggleCell,
       )));
 
       int placedBlackCells = 0;
@@ -131,6 +134,52 @@ class Grid {
     return grid.any((row) => row[col].value == value);
   }
 
+
+  // Vérifie si une valeur est en double sur une ligne donnée, en excluant la case à la position spécifiée.
+  bool isValueInRow(int row, int colToExclude, int value) {
+    for (int col = 0; col < size; col++) {
+      if (col != colToExclude && !cells[row][col].isBlack && cells[row][col].value == value) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  // Vérifie si une valeur est en double sur une colonne donnée, en excluant la case à la position spécifiée.
+  bool isValueInColumn(int col, int rowToExclude, int value) {
+    for (int row = 0; row < size; row++) {
+      if (row != rowToExclude && !cells[row][col].isBlack && cells[row][col].value == value) {
+        return true;
+      }
+    }
+    return false;
+  }
+  bool isGridValid() {
+    for (int row = 0; row < size; row++) {
+      for (int col = 0; col < size; col++) {
+        final value = cells[row][col].value;
+
+        // Vérifie s'il y a un doublon dans la ligne ou la colonne actuelle.
+        if (!cells[row][col].isBlack && (isValueInRow(row, col, value) || isValueInColumn(col, row, value))) {
+          return false; // Il y a un doublon, la grille n'est pas valide.
+        }
+      }
+    }
+
+    // Vérifiez les cases noires.
+    if (isBlackTileAdjacent(cells)) {
+      return false;
+    }
+
+    // Vérifiez que les cases noires ne divisent pas la grille en deux zones distinctes.
+    if (isGridDivided(cells)) {
+      return false;
+    }
+
+    return true;
+  }
+
+
   // Remplir les cases noires par des valeurs aléatoires
   void fillBlackTilesWithRandomValues(List<List<GridTileWidget>> grid) {
     final int size = grid.length;
@@ -145,120 +194,114 @@ class Grid {
     }
   }
 
-
-  //TODO Méthode pour vérifier si la grille est valide selon les règles du jeu Hitori
   bool _isValidGrid(List<List<GridTileWidget>> grid) {
-  final int size = grid.length;
+    final int size = grid.length;
 
-  // Vérifiez chaque ligne et colonne pour les doublons.
-  for (int i = 0; i < size; i++) {
-    Set<int> rowSet = {};
-    Set<int> colSet = {};
+    // Vérifiez chaque ligne et colonne pour les doublons.
+    for (int i = 0; i < size; i++) {
+      Set<int> rowSet = {};
+      Set<int> colSet = {};
+      
+      for (int j = 0; j < size; j++) {
+        int rowValue = grid[i][j].value;
+        int colValue = grid[j][i].value;
+
+        if (rowValue != 0) {
+          if (rowSet.contains(rowValue)) {
+            return false; // Doublon dans la ligne.
+          }
+          rowSet.add(rowValue);
+        }
+
+        if (colValue != 0) {
+          if (colSet.contains(colValue)) {
+            return false; // Doublon dans la colonne.
+          }
+          colSet.add(colValue);
+        }
+      }
+    }
+
+    // Vérifiez les cases noires.
+    if (isBlackTileAdjacent(grid)) {
+      return false;
+    }
+
+    // Vérifiez que les cases noires ne divisent pas la grille en deux zones distinctes.
+    if (!isGridDivided(grid)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  bool isBlackTileAdjacent(List<List<GridTileWidget>> grid) {
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        if (grid[i][j].isBlack) {
+          // Vérifiez si la case noire ne touche pas une autre case noire.
+          if (i > 0 && grid[i - 1][j].isBlack) {
+            return true; // Case noire adjacente verticalement.
+          }
+          if (i < size - 1 && grid[i + 1][j].isBlack) {
+            return true; // Case noire adjacente verticalement.
+          }
+          if (j > 0 && grid[i][j - 1].isBlack) {
+            return true; // Case noire adjacente horizontalement.
+          }
+          if (j < size - 1 && grid[i][j + 1].isBlack) {
+            return true; // Case noire adjacente horizontalement.
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  bool isGridDivided(List<List<GridTileWidget>> grid) {
+    final int size = grid.length;
+    bool start = false;
+    List<List<bool>> visited = List.generate(size, (_) => List.generate(size, (_) => false));
+
+    // Recherche de la première case non noire.
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        if (!grid[i][j].isBlack && !visited[i][j] && !start) {
+          // Démarrez la recherche en profondeur à partir de cette case.
+          _dfs(grid, visited, i, j);
+          start = true;
+        }
+      }
+    }
+
+    // Vérifiez si toutes les cases non noires ont été visitées.
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        if (!grid[i][j].isBlack && !visited[i][j]) {
+          return true; // Toutes les cases non noires ne sont pas visitées, la grille est divisée.
+        }
+      }
+    }
+
+    return false; // Toutes les cases non noires ont été visitées, la grille n'est pas divisée.
+  }
+
+  void _dfs(List<List<GridTileWidget>> grid, List<List<bool>> visited, int row, int col) {
+    if (row < 0 || row >= grid.length || col < 0 || col >= grid[0].length || visited[row][col] || grid[row][col].isBlack) {
+      return; // Cas de base de l'arrêt de la recherche.
+    }
     
-    for (int j = 0; j < size; j++) {
-      int rowValue = grid[i][j].value;
-      int colValue = grid[j][i].value;
+    visited[row][col] = true;
 
-      if (rowValue != 0) {
-        if (rowSet.contains(rowValue)) {
-          return false; // Doublon dans la ligne.
-        }
-        rowSet.add(rowValue);
-      }
-
-      if (colValue != 0) {
-        if (colSet.contains(colValue)) {
-          return false; // Doublon dans la colonne.
-        }
-        colSet.add(colValue);
-      }
-    }
+    // Parcours en profondeur vers les cases adjacentes.
+    _dfs(grid, visited, row - 1, col);
+    _dfs(grid, visited, row + 1, col);
+    _dfs(grid, visited, row, col - 1);
+    _dfs(grid, visited, row, col + 1);
   }
 
-  // Vérifiez les cases noires.
-  if (isBlackTileAdjacent(grid)) {
-    return false;
-  }
-
-  // Vérifiez que les cases noires ne divisent pas la grille en deux zones distinctes.
-  if (!isGridDivided(grid)) {
-    return false;
-  }
-
-  return true;
-}
-
-bool isBlackTileAdjacent(List<List<GridTileWidget>> grid) {
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
-      if (grid[i][j].isBlack) {
-        // Vérifiez si la case noire ne touche pas une autre case noire.
-        if (i > 0 && grid[i - 1][j].isBlack) {
-          return true; // Case noire adjacente verticalement.
-        }
-        if (i < size - 1 && grid[i + 1][j].isBlack) {
-          return true; // Case noire adjacente verticalement.
-        }
-        if (j > 0 && grid[i][j - 1].isBlack) {
-          return true; // Case noire adjacente horizontalement.
-        }
-        if (j < size - 1 && grid[i][j + 1].isBlack) {
-          return true; // Case noire adjacente horizontalement.
-        }
-      }
-    }
-  }
-  return false;
-}
-
-bool isGridDivided(List<List<GridTileWidget>> grid) {
-  final int size = grid.length;
-  bool start = false;
-  List<List<bool>> visited = List.generate(size, (_) => List.generate(size, (_) => false));
-
-  // Recherche de la première case non noire.
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
-      if (!grid[i][j].isBlack && !visited[i][j] && !start) {
-        // Démarrez la recherche en profondeur à partir de cette case.
-        _dfs(grid, visited, i, j);
-        start = true;
-      }
-    }
-  }
-
-  // Vérifiez si toutes les cases non noires ont été visitées.
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
-      if (!grid[i][j].isBlack && !visited[i][j]) {
-        return true; // Toutes les cases non noires ne sont pas visitées, la grille est divisée.
-      }
-    }
-  }
-
-  return false; // Toutes les cases non noires ont été visitées, la grille n'est pas divisée.
-}
-
-void _dfs(List<List<GridTileWidget>> grid, List<List<bool>> visited, int row, int col) {
-  if (row < 0 || row >= grid.length || col < 0 || col >= grid[0].length || visited[row][col] || grid[row][col].isBlack) {
-    return; // Cas de base de l'arrêt de la recherche.
-  }
-  
-  visited[row][col] = true;
-
-  // Parcours en profondeur vers les cases adjacentes.
-  _dfs(grid, visited, row - 1, col);
-  _dfs(grid, visited, row + 1, col);
-  _dfs(grid, visited, row, col - 1);
-  _dfs(grid, visited, row, col + 1);
-}
-
-  // Vérifier si la grille est résolue
-  bool isGridSolved() {
-    // Implémentez votre logique de résolution ici
-    // Comparez la grille avec les règles du jeu Hitori.
-    // Renvoyez true si la grille est résolue, sinon false.
-    return false;
+  void toggleCell(int row, int col) {
+    cells[row][col].isBlack = !cells[row][col].isBlack;
   }
 
 
