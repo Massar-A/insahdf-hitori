@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../screens/game_screen.dart';
 
 
 void main() => runApp(MyApp());
@@ -48,10 +49,14 @@ class _MyHomePageState extends State<MyHomePage> {
   String stringGridSize = "5x5";
 
   void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => GameScreen(gridSize: gridSize),
+      ),
+    );
   }
+
 
   void _turnOnOffButton() {
     setState(() {

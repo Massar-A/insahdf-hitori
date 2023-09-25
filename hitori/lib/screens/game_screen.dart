@@ -1,9 +1,22 @@
 import 'package:flutter/material.dart';
 import '../screens/game_board.dart';
 
-class GameScreen extends StatelessWidget {
+class GameScreen extends StatefulWidget {
+  final int gridSize;
+
+  // ignore: use_key_in_widget_constructors
+  const GameScreen({required this.gridSize});
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _GameScreenState createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
+    // Utilisez widget.gridSize pour créer la grille de jeu avec la bonne taille.
+    // Implementez la logique de jeu ici.
     return Scaffold(
       appBar: AppBar(title: Text('Jeu')),
       body: Center(
@@ -13,7 +26,7 @@ class GameScreen extends StatelessWidget {
           children: <Widget>[
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.75, // On donne une hauteur pour contenir le GridView
-              child: GameBoard(),
+              child: GameBoard(gridSize: widget.gridSize,),
             ),
             // Ajoutez d'autres widgets pour les contrôles du jeu ici.
           ],

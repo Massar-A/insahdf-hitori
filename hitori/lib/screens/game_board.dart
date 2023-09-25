@@ -4,6 +4,11 @@ import '../widgets/grid_tile.dart';
 
 // ignore: use_key_in_widget_constructors
 class GameBoard extends StatefulWidget {
+  final int gridSize; // Ajoutez cette variable
+
+  // ignore: use_key_in_widget_constructors
+  const GameBoard({required this.gridSize}); // Ajoutez le constructeur
+
   @override
   // ignore: library_private_types_in_public_api
   _GameBoardState createState() => _GameBoardState();
@@ -15,7 +20,7 @@ class _GameBoardState extends State<GameBoard> {
   @override
   void initState() {
     super.initState();
-    grid = Grid(5); // Ici la taille de la grille.
+    grid = Grid(widget.gridSize); // Ici la taille de la grille.
   }
 
   @override
