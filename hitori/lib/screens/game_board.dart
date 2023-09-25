@@ -47,36 +47,35 @@ class _GameBoardState extends State<GameBoard> {
               );
             },
           ),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: ElevatedButton(
-                onPressed: () {
-                  // Ajoutez ici le code pour sauvegarder la partie en cours.
-                },
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(140, 48),
-                ),
-                child: Text("Quitter"),
-              )
-            ),
-            Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: ElevatedButton(
-                onPressed: () {
-                  // Ajoutez ici le code pour sauvegarder la partie en cours.
-                },
-                style: ElevatedButton.styleFrom(
-                  fixedSize: const Size(140, 48),
-                ),
-                child: Text("Valider"),
-              )
-            ),
-          ],
-        )
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Ajoutez ici le code pour sauvegarder la partie en cours.
+                    },
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: const Size(140, 48),
+                    ),
+                    child: Text("Quitter"),
+                  )
+              ),
+              Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Ajoutez ici le code pour sauvegarder la partie en cours.
+                    },
+                    style: ElevatedButton.styleFrom(
+                      fixedSize: const Size(140, 48),
+                    ),
+                    child: Text("Valider"),
+                  )
+              ),
+            ],
+          ),
       ]
     );
   }
