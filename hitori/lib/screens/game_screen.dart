@@ -16,19 +16,28 @@ class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Jeu')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.75, // On donne une hauteur pour contenir le GridView
-              child: GameBoard(gridSize: widget.gridSize),
-            ),
-          ],
+        appBar: AppBar(
+          title: const Text('Jeu'),
+          automaticallyImplyLeading: false,
         ),
-      ),
-    );
+        body: WillPopScope(
+          onWillPop: () async => false,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.75,
+                  // On donne une hauteur pour contenir le GridView
+                  child: GameBoard(
+                    gridSize: widget.gridSize,
+                  ),
+                ),
+                // Ajoutez d'autres widgets pour les contrôles du jeu ici.
+              ],
+            ),
+          ),
+        ));
   }
 }
