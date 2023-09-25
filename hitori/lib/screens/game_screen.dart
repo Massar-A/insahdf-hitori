@@ -15,8 +15,6 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   @override
   Widget build(BuildContext context) {
-    // Utilisez widget.gridSize pour créer la grille de jeu avec la bonne taille.
-    // Implementez la logique de jeu ici.
     return Scaffold(
         appBar: AppBar(
           title: const Text('Jeu'),
