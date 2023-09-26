@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     "11x11": 11,
     "12x12": 12
   };
-  bool showContinueButton = true;
+  bool showContinueButton = false;
 
   int gridSize = 5;
   String stringGridSize = "5x5";
@@ -66,16 +66,25 @@ class _MyHomePageState extends State<MyHomePage> {
   void _showContinueButton() async {
     final Directory directory = await getApplicationDocumentsDirectory();
     final path = directory.path;
-
-    if (await File('$path/gameInProgress.json').length() > 1) {
-      setState(() {
-        showContinueButton = true;
-      });
+    if(await File('$path/gameInProgress.json').exists()) {
+      if (await File('$path/gameInProgress.json').length() > 10) {
+        print("wsh");
+        print(await File('$path/gameInProgress.json').readAsString());
+        setState(() {
+          showContinueButton = true;
+        });
+      } else {
+        setState(() {
+          showContinueButton = false;
+        });
+      }
     } else {
+      await File('$path/gameInProgress.json').create();
       setState(() {
         showContinueButton = false;
       });
     }
+
   }
 
   void _turnOnOffButton() async {
