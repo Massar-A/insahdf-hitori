@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/grid.dart';
-import '../widgets/grid_tile.dart';
 
 // ignore: use_key_in_widget_constructors
 class GameBoard extends StatefulWidget {
@@ -41,13 +40,7 @@ class _GameBoardState extends State<GameBoard> {
             itemBuilder: (context, index) {
               final row = index ~/ grid.size;
               final col = index % grid.size;
-              return GridTileWidget(
-                row: row,
-                col: col,
-                value: grid.cells[row][col].value,
-                isBlack: grid.cells[row][col].isBlack,
-                onTap: grid.toggleCell,
-                );
+              return grid.cells[row][col];
             },
           ),
           Row(
