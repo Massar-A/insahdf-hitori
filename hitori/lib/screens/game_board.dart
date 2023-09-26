@@ -31,7 +31,6 @@ class _GameBoardState extends State<GameBoard> {
     final path = directory.path;
     final file = File('$path/gameInProgress.json');
     File('$path/gameInProgress.json').writeAsStringSync('');
-    print(await file.readAsString());
     return true;
   }
 

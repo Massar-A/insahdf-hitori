@@ -66,8 +66,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void _showContinueButton() async {
     final Directory directory = await getApplicationDocumentsDirectory();
     final path = directory.path;
-    if(await File('$path/gameInProgress.json').exists()) {
-      if (await File('$path/gameInProgress.json').length() > 10) {
+    if(File('$path/gameInProgress.json').existsSync()) {
+      if (await File('$path/gameInProgress.json').length() > 1) {
         print("wsh");
         print(await File('$path/gameInProgress.json').readAsString());
         setState(() {
