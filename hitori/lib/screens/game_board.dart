@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -21,9 +22,31 @@ class _GameBoardState extends State<GameBoard> {
   late Grid grid;
 
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    grid = Grid(widget.gridSize); // Ici la taille de la grille.
+    grid = Grid(widget.gridSize, _getJson()); // Ici la taille de la grille.
+  }
+
+  Future<String> _initializePath() async {
+    print("aled");
+    Directory directory = await getApplicationDocumentsDirectory();
+    print(directory);
+    String _path = directory.path;
+    return _path;
+  }
+
+  Future<Map<String, dynamic>> _getJson() async {
+    String string = await _initializePath();
+    final file = File('$string/gameInProgress.json');
+    Map<String, dynamic>  jsonData = {'test': 0};
+
+    if (await file.exists()) {
+      final jsonString = await file.readAsString();
+      print("hola");
+      print(jsonString);
+      jsonData = json.decode(jsonString);
+    }
+    return jsonData;
   }
 
   Future<bool> _turnOnOffButton() async {

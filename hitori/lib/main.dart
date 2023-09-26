@@ -63,10 +63,19 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _continueGame() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const GameScreen(gridSize: 0),
+      ),
+    );
+  }
+
   void _showContinueButton() async {
     final Directory directory = await getApplicationDocumentsDirectory();
     final path = directory.path;
-    if(File('$path/gameInProgress.json').existsSync()) {
+    if (File('$path/gameInProgress.json').existsSync()) {
       if (await File('$path/gameInProgress.json').length() > 1) {
         print("wsh");
         print(await File('$path/gameInProgress.json').readAsString());
@@ -84,7 +93,6 @@ class _MyHomePageState extends State<MyHomePage> {
         showContinueButton = false;
       });
     }
-
   }
 
   void _turnOnOffButton() async {
@@ -157,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     padding: const EdgeInsets.only(bottom: 50),
                     child: ElevatedButton(
                       onPressed: () {
-                        // Action à exécuter pour le bouton "Continuer la partie"
+                        _continueGame();
                       },
                       style: ElevatedButton.styleFrom(
                         fixedSize: const Size(300, 48),

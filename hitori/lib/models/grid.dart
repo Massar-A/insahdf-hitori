@@ -2,17 +2,23 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import '../widgets/grid_tile.dart';
 
 
 class Grid {
-  final int size;
+  late final int size;
   late List<List<GridTileWidget>> cells;
+  late Future<Map<String, dynamic>> jsonData;
 
-  Grid(this.size) {
-    cells = generateHitoriGrid();
+  Grid(this.size, this.jsonData) {
+    if(size == 0){
+      cells = generateFromJson(jsonData);
+    }else {
+      cells = generateHitoriGrid();
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -39,7 +45,7 @@ class Grid {
     if(await File('$path/gameInProgress.json').exists()){
       return File('$path/gameInProgress.json');
     } else {
-      return File('$path/gameInProgress.json').create();
+      return File('$path/gameInProgress.json').writeAsString("");
     }
   }
   Future<File> saveToJsonFile() async {
@@ -55,7 +61,24 @@ class Grid {
     return file.writeAsString(jsonString);
   }
 
+  List<List<GridTileWidget>> generateFromJson(jsonData) {
+    final List<List<Map<String, dynamic>>> gridJson = jsonData['grid'];
+    size = gridJson.length;
 
+    List<List<GridTileWidget>> grid = gridJson.mapIndexed((indexRow, row) {
+      return row.mapIndexed((indexColumn, cellJson) {
+        return GridTileWidget(
+          key: UniqueKey(),
+          value: cellJson['value'],
+          isBlack: cellJson['isBlack'],
+          row: indexRow,
+          col: indexColumn,
+          onTap: toggleCell,
+        );
+      }).toList();
+    }).toList();
+    return grid;
+  }
 
   List<List<GridTileWidget>> generateHitoriGrid() {
     // Créer une grille vide avec des cases blanches.
