@@ -6,14 +6,16 @@ class GridTileWidget extends StatefulWidget {
   final int col;
   bool isBlack;
   int value;
+  final void Function(int, int) onTap;
 
-  // ignore: use_key_in_widget_constructors
-  GridTileWidget({
+  GridTileWidget({ 
+    Key? key, 
     required this.row,
     required this.col,
     this.isBlack = false,
     required this.value,
-  });
+    required this.onTap,
+  }) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
