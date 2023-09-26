@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
-import 'package:flutter/material.dart';
-import '../widgets/grid_tile.dart'; 
+
+import 'package:path_provider/path_provider.dart';
+import '../widgets/grid_tile.dart';
+
 
 class Grid {
   final int size;
@@ -9,6 +13,48 @@ class Grid {
   Grid(this.size) {
     cells = generateHitoriGrid();
   }
+
+  Map<String, dynamic> toJson() {
+    List<List<Map<String, dynamic>>> gridJson = cells.map((row) {
+      return row.map((cell) {
+        return {
+          'value': cell.value,
+          'isBlack': cell.isBlack,
+        };
+      }).toList();
+    }).toList();
+
+    Map<String, dynamic> jsonMap = {
+    'time': 0,// chronomètre, vous devez définir la valeur du chronomètre ici,
+    'grid': gridJson,
+  };
+    print(jsonMap);
+    return jsonMap;
+  }
+  Future<File> get _localFile async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
+
+    if(await File('$path/gameInProgress.json').exists()){
+      return File('$path/gameInProgress.json');
+    } else {
+      return File('$path/gameInProgress.json').create();
+    }
+  }
+  Future<File> saveToJsonFile() async {
+    final jsonData = toJson();
+    final jsonString = jsonEncode(jsonData);
+
+    var file = await _localFile;// Remplacez 'your_file.json' par le chemin de votre fichier JSON.
+    if(await file.length() > 1){
+      file.delete();
+      file = await _localFile;
+    }
+    
+    return file.writeAsString(jsonString);
+  }
+
+
 
   List<List<GridTileWidget>> generateHitoriGrid() {
     // Créer une grille vide avec des cases blanches.

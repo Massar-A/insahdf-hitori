@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:hitori/main.dart';
+import 'package:path_provider/path_provider.dart';
 import '../models/grid.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -20,6 +24,15 @@ class _GameBoardState extends State<GameBoard> {
   void initState() {
     super.initState();
     grid = Grid(widget.gridSize); // Ici la taille de la grille.
+  }
+
+  Future<bool> _turnOnOffButton() async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
+    final file = File('$path/gameInProgress.json');
+    File('$path/gameInProgress.json').writeAsStringSync('');
+    print(await file.readAsString());
+    return true;
   }
 
   @override
@@ -50,11 +63,20 @@ class _GameBoardState extends State<GameBoard> {
                   padding: const EdgeInsets.only(right: 10),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Ajoutez ici le code pour sauvegarder la partie en cours.
+                      grid.saveToJsonFile();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MyHomePage(
+                            title: 'Hitori',
+                          ),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(140, 48),
                     ),
+
                     child: const Text("Quitter"),
                   )
               ),
@@ -75,7 +97,16 @@ class _GameBoardState extends State<GameBoard> {
                               actions: [
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.of(context).pop(); // Fermez la boîte de dialogue.
+                                    Navigator.of(context).pop();// Fermez la boîte de dialogue.
+                                    _turnOnOffButton(),
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const MyHomePage(
+                                          title: 'Hitori',
+                                        ),
+                                      ),
+                                    )
                                   },
                                   child: Text("OK"),
                                 ),
@@ -95,12 +126,12 @@ class _GameBoardState extends State<GameBoard> {
                     child: Text("Valider"),
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(140, 48),
-                    )
-                  )
-              ),
+                    ),
+                    child: const Text("Valider"),
+                  )),
+
             ],
           ),
-      ]
-    );
+        ]);
   }
 }
