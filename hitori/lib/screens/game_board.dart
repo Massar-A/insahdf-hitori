@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:hitori/main.dart';
 import 'package:path_provider/path_provider.dart';
 import '../models/grid.dart';
-import '../widgets/grid_tile.dart';
-import '../models/grid.dart';
 
 // ignore: use_key_in_widget_constructors
 class GameBoard extends StatefulWidget {
@@ -39,6 +37,8 @@ class _GameBoardState extends State<GameBoard> {
 
   @override
   Widget build(BuildContext context) {
+    Stopwatch stopwatch = Stopwatch()..start();
+
     return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -53,11 +53,7 @@ class _GameBoardState extends State<GameBoard> {
             itemBuilder: (context, index) {
               final row = index ~/ grid.size;
               final col = index % grid.size;
-              return GridTileWidget(
-                  row: row,
-                  col: col,
-                  value: grid.cells[row][col].value,
-                  isBlack: grid.cells[row][col].isBlack);
+              return grid.cells[row][col];
             },
           ),
           Row(
@@ -80,27 +76,60 @@ class _GameBoardState extends State<GameBoard> {
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(140, 48),
                     ),
-                    child: Text("Quitter"),
-                  )),
+
+                    child: const Text("Quitter"),
+                  )
+              ),
               Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: ElevatedButton(
-                    onPressed: () => {
-                      _turnOnOffButton(),
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MyHomePage(
-                            title: 'Hitori',
+                    onPressed: () {
+                      
+                      if (grid.isGridValid()) {
+                        // La grille est valide, affichez un message de félicitations et le temps mis.
+                        final elapsedSeconds = stopwatch.elapsed.inSeconds;
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text("Félicitations !"),
+                              content: Text("Vous avez résolu la grille en $elapsedSeconds secondes."),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();// Fermez la boîte de dialogue.
+                                    _turnOnOffButton(),
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const MyHomePage(
+                                          title: 'Hitori',
+                                        ),
+                                      ),
+                                    )
+                                  },
+                                  child: Text("OK"),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      } else {
+                        // La grille n'est pas valide, affichez un message d'erreur.
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text("La grille n'est pas valide. Veuillez réessayer."),
                           ),
-                        ),
-                      )
+                        );
+                      }
                     },
+                    child: Text("Valider"),
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(140, 48),
                     ),
                     child: const Text("Valider"),
                   )),
+
             ],
           ),
         ]);
