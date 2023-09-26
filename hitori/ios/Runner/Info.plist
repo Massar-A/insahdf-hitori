@@ -45,5 +45,10 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSFileProviderDomain</key>
+    <string>YOUR_APP_BUNDLE_IDENTIFIER</string>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Nous avons besoin d'accéder à votre stockage pour enregistrer les parties</string>
+
 </dict>
 </plist>

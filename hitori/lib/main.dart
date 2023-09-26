@@ -1,11 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../screens/game_screen.dart';
 
-
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -56,17 +63,34 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void _showContinueButton() async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
 
-  void _turnOnOffButton() {
-    setState(() {
-      showContinueButton = !showContinueButton;
-    });
+    if (await File('$path/gameInProgress.json').length() > 1) {
+      setState(() {
+        showContinueButton = true;
+      });
+    } else {
+      setState(() {
+        showContinueButton = false;
+      });
+    }
+  }
+
+  void _turnOnOffButton() async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
+    final file = File('$path/gameInProgress.json');
+    print(await file.readAsString());
+    File('$path/gameInProgress.json').writeAsStringSync('');
   }
 
   @override
   void initState() {
     super.initState();
     loadPreferences();
+    _showContinueButton();
   }
 
   Future<void> loadPreferences() async {
@@ -193,19 +217,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               fontSize: 18, color: Colors.black),
                         ),
                       ],
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 20),
-                  child: ElevatedButton(
-                    onPressed: _turnOnOffButton,
-                    style: ElevatedButton.styleFrom(
-                      fixedSize: const Size(300, 50),
-                    ),
-                    child: const Text(
-                      "Allumer/Éteindre bouton continuer",
-                      style: TextStyle(fontSize: 25),
                     ),
                   ),
                 ),

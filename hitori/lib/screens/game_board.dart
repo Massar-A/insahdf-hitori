@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:hitori/main.dart';
+import 'package:path_provider/path_provider.dart';
 import '../models/grid.dart';
 import '../widgets/grid_tile.dart';
+import '../models/grid.dart';
 
 // ignore: use_key_in_widget_constructors
 class GameBoard extends StatefulWidget {
@@ -23,6 +28,15 @@ class _GameBoardState extends State<GameBoard> {
     grid = Grid(widget.gridSize); // Ici la taille de la grille.
   }
 
+  Future<bool> _turnOnOffButton() async {
+    final Directory directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
+    final file = File('$path/gameInProgress.json');
+    File('$path/gameInProgress.json').writeAsStringSync('');
+    print(await file.readAsString());
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -40,11 +54,10 @@ class _GameBoardState extends State<GameBoard> {
               final row = index ~/ grid.size;
               final col = index % grid.size;
               return GridTileWidget(
-                row: row,
-                col: col,
-                value: grid.cells[row][col].value,
-                isBlack: grid.cells[row][col].isBlack
-              );
+                  row: row,
+                  col: col,
+                  value: grid.cells[row][col].value,
+                  isBlack: grid.cells[row][col].isBlack);
             },
           ),
           Row(
@@ -54,29 +67,42 @@ class _GameBoardState extends State<GameBoard> {
                   padding: const EdgeInsets.only(right: 10),
                   child: ElevatedButton(
                     onPressed: () {
-                      // Ajoutez ici le code pour sauvegarder la partie en cours.
+                      grid.saveToJsonFile();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MyHomePage(
+                            title: 'Hitori',
+                          ),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(140, 48),
                     ),
                     child: Text("Quitter"),
-                  )
-              ),
+                  )),
               Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: ElevatedButton(
-                    onPressed: () {
-                      // Ajoutez ici le code pour sauvegarder la partie en cours.
+                    onPressed: () => {
+                      _turnOnOffButton(),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MyHomePage(
+                            title: 'Hitori',
+                          ),
+                        ),
+                      )
                     },
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(140, 48),
                     ),
-                    child: Text("Valider"),
-                  )
-              ),
+                    child: const Text("Valider"),
+                  )),
             ],
           ),
-      ]
-    );
+        ]);
   }
 }
