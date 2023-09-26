@@ -98,7 +98,7 @@ class _GameBoardState extends State<GameBoard> {
                                 TextButton(
                                   onPressed: () {
                                     Navigator.of(context).pop();// Fermez la boîte de dialogue.
-                                    _turnOnOffButton(),
+                                    _turnOnOffButton();
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -106,7 +106,7 @@ class _GameBoardState extends State<GameBoard> {
                                           title: 'Hitori',
                                         ),
                                       ),
-                                    )
+                                    );
                                   },
                                   child: Text("OK"),
                                 ),
@@ -117,17 +117,16 @@ class _GameBoardState extends State<GameBoard> {
                       } else {
                         // La grille n'est pas valide, affichez un message d'erreur.
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                             content: Text("La grille n'est pas valide. Veuillez réessayer."),
                           ),
                         );
                       }
                     },
-                    child: Text("Valider"),
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(140, 48),
                     ),
-                    child: const Text("Valider"),
+                    child: const Text("Valider")
                   )),
 
             ],
